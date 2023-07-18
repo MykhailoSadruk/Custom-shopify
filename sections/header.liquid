@@ -1,0 +1,111 @@
+<style>
+  .custom-header-style {
+    background-color: rgb(178 178 178);
+    padding: 15px;
+  }
+
+  .custom-navbar__menu-style {
+    display: flex;
+    list-style: none;
+    text-align: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    gap: 30px;
+  }
+
+  .custom-navbar__item-style {
+    position: relative;
+  }
+  
+  .custom-navbar__link-style {
+    font-size: 22px;
+    line-height: 120%;
+    font-weight: 600;
+    color: #000;
+  }
+
+  .custom-navbar__link-style:hover {
+    color: #6e6e6e;
+  }
+
+  .custom-navbar__dropdown-style {
+    display: none;
+    width: max-content;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #b2b2b2db;
+    border-radius: 2px;
+    padding: 10px 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .custom-navbar__dropdown-link-style:hover {
+    color: #000;
+  }
+
+  .custom-navbar__dropdown-title-style {
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .custom-navbar__dropdown-link-style {
+    text-decoration: none;
+    color: #6e6e6e;
+  }
+
+  .custom-navbar__item-style:hover .custom-navbar__dropdown-style {
+    display: block;
+  }
+
+  .custom-navbar__dropdown-container-link-style {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+
+{% assign custom_menu = section.settings.custom_menu %}
+
+<header class="custom-header-style">
+  <nav class="custom-navbar-style">
+    <ul class="custom-navbar__menu-style">
+      {% for custom_link in custom_menu.links %}
+        <li class="custom-navbar__item-style">
+          <a class="custom-navbar__link-style" href="{{ custom_link.url }}">{{ custom_link.title }}</a>
+          {% if custom_link.links.size > 0 %}
+            <div class="custom-navbar__dropdown-style">
+              {% for custom_sublink in custom_link.links %}
+                <div class="custom-navbar__dropdown-title-style">{{ custom_sublink.title }}</div>
+                {% assign sorted_custom_links = custom_sublink.links | sort: 'title' %}
+                <div class="custom-navbar__dropdown-container-link-style">
+                  {% for custom_subsublink in sorted_custom_links %}
+                    <a class="custom-navbar__dropdown-link-style" href="{{ custom_subsublink.url }}">{{ custom_subsublink.title }}</a>
+                  {% endfor %}
+                </div>
+                <a class="custom-navbar__dropdown-link-style" href="{{ custom_link.url }}">
+                  <i>See All</i>
+                </a>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</header>
+
+{% schema %}
+  {
+    "name": "Custom Header Section",
+    "class": "section-custom-header",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "custom_menu",
+        "default": "main-menu",
+        "label": "t:sections.custom_header.settings.menu.label"
+      }
+    ]
+  }
+{% endschema %}
